@@ -1,0 +1,30 @@
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.card {
+  border: 1px solid #ccc;
+  padding: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.card h2 {
+  margin-bottom: 0.5rem;
+  flex: 0 0 auto; /* esto asegura que el título no crezca ni se encoja y siempre ocupe el espacio necesario */
+}
+
+.card img {
+  max-width: 100%;
+  height: 150px; /* alto fijo para la imagen */
+  object-fit: cover;
+  margin-bottom: 1rem;
+  flex: 0 0 auto; /* la imagen no crece ni se encoje */
+}
+
+.card p {
+  flex: 1 0 auto;
+}

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Peliculas App</title>
+  </head>
+  <body>
+    <form action="#" onsubmit="return findMovie();">
+      <input
+        type="text"
+        id="nameMovie"
+        placeholder="Introduce término de búsqueda"
+      />
+
+      <!-- este boton sirve para buscar mientras el usuario va escribiendo
+      <input
+        type="text"
+        id="nameMovie"
+        placeholder="Introduce término de búsqueda"
+        oninput="debounceBusqueda()"
+      />
+      -->
+      <button type="submit">Buscar</button>
+    </form>
+
+    <div class="grid-container" id="resultadoGrid"></div>
+
+    <script>
+      let ultimoTerminoBuscado = null;
+      let ultimosResultados = null;
+      let timer;
+
+      function debounceBusqueda() {
+        clearTimeout(timer); // reinicio el temporizador anterior
+        timer = setTimeout(findMovie, 300); // tiempo de espera de 300ms antes de buscar cuando el usuario deje de escribir
+      }
+
+      async function findMovie() {
+        const termino = document.getElementById('nameMovie').value;
+
+        // si el termino es el mismo que la ultima busqueda, muestra los resultados almacenados
+        if (termino === ultimoTerminoBuscado) {
+          mostrarResultados(ultimosResultados);
+          return false;
+        }
+
+        const apiKey = '612fbaad';
+        const url = `https://www.omdbapi.com/?s=${termino}&apikey=${apiKey}`;
+
+        try {
+          const response = await fetch(url);
+          const data = await response.json();
+
+          if (data.Response === 'True') {
+            ultimoTerminoBuscado = termino; // almacena el ultimo termino buscado
+            ultimosResultados = data.Search; // almacena los ultimos resultados
+            mostrarResultados(data.Search);
+          } else {
+            alert(data.Error);
+          }
+        } catch (error) {
+          console.error('Error al consultar la API de OMDB:', error);
+          alert(
+            'Hubo un error al buscar las peliculas. Por favor, intenta de nuevo.'
+          );
+        }
+
+        return false;
+      }
+
+      function mostrarResultados(peliculas) {
+        const grid = document.getElementById('resultadoGrid');
+        grid.innerHTML = ''; // limpiamos el grid antes de mostrar nuevos resultados
+
+        peliculas.forEach((pelicula) => {
+          const card = document.createElement('div');
+          card.classList.add('card');
+
+          const title = document.createElement('h2');
+          title.textContent = pelicula.Title;
+
+          const img = document.createElement('img');
+          img.src =
+            pelicula.Poster !== 'N/A'
+              ? pelicula.Poster
+              : 'https://via.placeholder.com/200';
+
+          const year = document.createElement('p');
+          year.textContent = 'Año: ' + pelicula.Year;
+
+          card.appendChild(title);
+          card.appendChild(img);
+          card.appendChild(year);
+          grid.appendChild(card);
+        });
+      }
+    </script>
+  </body>
+</html>
